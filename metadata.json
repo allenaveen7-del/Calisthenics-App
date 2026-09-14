@@ -1,0 +1,6 @@
+{
+  "name": "Calisthenics Coach",
+  "description": "Personal offline calisthenics training coach with daily workout programs, skill progressions, rest timers, and progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
