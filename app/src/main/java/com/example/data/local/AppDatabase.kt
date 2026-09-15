@@ -13,9 +13,10 @@ import androidx.room.RoomDatabase
         UserProfileEntity::class,
         ExerciseEntity::class,
         CustomProgramEntity::class,
-        RoutineDayEntity::class
+        RoutineDayEntity::class,
+        CommunityPostEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -25,6 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userProfileDao(): UserProfileDao
     abstract fun exerciseDao(): ExerciseDao
     abstract fun programDao(): ProgramDao
+    abstract fun communityPostDao(): CommunityPostDao
 
     companion object {
         @Volatile

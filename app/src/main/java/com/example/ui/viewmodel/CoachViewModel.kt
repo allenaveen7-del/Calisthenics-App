@@ -127,6 +127,65 @@ class CoachViewModel(application: Application) : AndroidViewModel(application) {
         ProgressionEngine.analyzeProgress(profile, records, prs, skills)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    // KINETIX Gamification Rank & XP Progression
+    val rankProgression: StateFlow<com.example.data.model.RankProgressData> = combine(
+        workoutRecords,
+        skillProgressList,
+        personalRecords,
+        workoutStreak
+    ) { records, skills, prs, streak ->
+        com.example.data.model.RankCalculator.calculateRank(
+            workoutCount = records.size,
+            skillLevelsSum = skills.sumOf { it.currentLevel },
+            prCount = prs.size,
+            streakDays = streak
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        com.example.data.model.RankCalculator.calculateRank(0, 0, 0, 0)
+    )
+
+    // Community Feed State
+    val communityPosts: StateFlow<List<com.example.data.local.CommunityPostEntity>> = repository.allCommunityPosts
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // 345+ Exercise Library Filtering & Search
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
+
+    private val _selectedEquipment = MutableStateFlow("All")
+    val selectedEquipment: StateFlow<String> = _selectedEquipment.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    val filteredExercises: StateFlow<List<ExerciseEntity>> = combine(
+        allExercises,
+        _selectedCategory,
+        _selectedEquipment,
+        _searchQuery
+    ) { list, cat, equip, query ->
+        list.filter { ex ->
+            val matchesCat = cat == "All" || ex.category.equals(cat, ignoreCase = true)
+            val matchesEquip = equip == "All" || ex.equipmentRequired.contains(equip, ignoreCase = true)
+            val matchesQuery = query.isBlank() || ex.name.contains(query, ignoreCase = true) ||
+                    ex.muscleGroup.contains(query, ignoreCase = true) ||
+                    ex.equipmentRequired.contains(query, ignoreCase = true)
+            matchesCat && matchesEquip && matchesQuery
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // Onboarding & Multi-Provider Auth State
+    private val _onboardingStep = MutableStateFlow(0) // 0 = not in onboarding or completed
+    val onboardingStep: StateFlow<Int> = _onboardingStep.asStateFlow()
+
+    private val _authProvider = MutableStateFlow("Google (crmyhsk@gmail.com)")
+    val authProvider: StateFlow<String> = _authProvider.asStateFlow()
+
+    private val _userAvatar = MutableStateFlow("falcon")
+    val userAvatar: StateFlow<String> = _userAvatar.asStateFlow()
+
     // "Study Me" Comprehensive Diagnosis
     val studyMeReport: StateFlow<StudyMeReport> = combine(
         userProfile,
@@ -252,6 +311,110 @@ class CoachViewModel(application: Application) : AndroidViewModel(application) {
                 durationMinutes = durationMinutes,
                 limitations = limitations
             )
+        }
+    }
+
+    fun setExerciseCategory(category: String) {
+        _selectedCategory.value = category
+    }
+
+    fun setEquipmentFilter(equipment: String) {
+        _selectedEquipment.value = equipment
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun setOnboardingStep(step: Int) {
+        _onboardingStep.value = step
+    }
+
+    fun setAuthProvider(provider: String) {
+        _authProvider.value = provider
+    }
+
+    fun setUserAvatar(avatar: String) {
+        _userAvatar.value = avatar
+    }
+
+    fun completeOnboarding(
+        fitnessLevel: String,
+        primaryGoal: String,
+        equipment: String,
+        daysPerWeek: Int,
+        weightKg: Float,
+        heightCm: Float
+    ) {
+        viewModelScope.launch {
+            val current = userProfile.value ?: UserProfileEntity()
+            val updated = current.copy(
+                fitnessLevel = fitnessLevel,
+                primaryGoal = primaryGoal,
+                equipmentAvailable = equipment,
+                trainingDaysPerWeek = daysPerWeek,
+                weightKg = weightKg,
+                heightCm = heightCm,
+                isOnboardingCompleted = true,
+                avatarId = _userAvatar.value,
+                authProvider = _authProvider.value
+            )
+            repository.saveUserProfile(updated)
+            _onboardingStep.value = 0
+        }
+    }
+
+    fun toggleLikeCommunityPost(postId: String, currentLikes: Int, isLiked: Boolean) {
+        viewModelScope.launch {
+            repository.toggleLikePost(postId, currentLikes, isLiked)
+        }
+    }
+
+    fun toggleBookmarkCommunityPost(postId: String, isBookmarked: Boolean) {
+        viewModelScope.launch {
+            repository.toggleBookmarkPost(postId, isBookmarked)
+        }
+    }
+
+    fun publishCommunityPost(content: String, workoutTag: String, prTag: String) {
+        if (content.isBlank()) return
+        viewModelScope.launch {
+            val user = userProfile.value
+            val rank = "${rankProgression.value.currentTier.tierName} ${rankProgression.value.currentTier.division}"
+            val post = com.example.data.local.CommunityPostEntity(
+                id = "post_" + java.util.UUID.randomUUID().toString().take(8),
+                authorName = user?.displayName ?: "Kinetix Athlete",
+                authorHandle = "@" + (user?.username ?: "apex_athlete"),
+                authorRankTier = rank,
+                avatarId = _userAvatar.value,
+                timeAgo = "Just now",
+                content = content.trim(),
+                workoutTag = workoutTag,
+                prTag = prTag,
+                likesCount = 0,
+                isLiked = false,
+                isBookmarked = false,
+                commentsCount = 0
+            )
+            repository.insertCommunityPost(post)
+        }
+    }
+
+    fun deleteCommunityPost(postId: String) {
+        viewModelScope.launch {
+            repository.deleteCommunityPost(postId)
+        }
+    }
+
+    fun deletePR(recordKey: String) {
+        viewModelScope.launch {
+            repository.deletePR(recordKey)
+        }
+    }
+
+    fun deleteWorkoutRecord(recordId: Long) {
+        viewModelScope.launch {
+            repository.deleteWorkoutRecord(recordId)
         }
     }
 

@@ -1,6 +1,6 @@
 {
-  "name": "Calisthenics Coach",
-  "description": "Personal offline calisthenics training coach with daily workout programs, skill progressions, rest timers, and progress tracking.",
+  "name": "KINETIX",
+  "description": "KINETIX: Movement & Strength. Hyper-responsive gamified calisthenics & fitness engine with tier ranks, 300+ exercises, routine builder, audio rest timers, and AI coaching.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

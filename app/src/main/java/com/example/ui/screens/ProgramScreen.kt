@@ -265,16 +265,20 @@ fun ExerciseLibraryView(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("All") }
+    var selectedEquipment by remember { mutableStateOf("All") }
     var expandedExerciseId by remember { mutableStateOf<String?>(null) }
 
-    val categories = listOf("All", "Push", "Pull", "Legs", "Core", "Skill", "Mobility")
+    val categories = listOf("All", "Push", "Pull", "Legs", "Core", "Rings", "Barbell", "Dumbbell", "Cable", "Machines", "Mobility")
+    val equipmentList = listOf("All", "Bodyweight", "Rings", "Barbell", "Dumbbell", "Cable", "Machine", "Parallettes")
 
     val filteredExercises = exercises.filter { ex ->
         val matchesCategory = selectedCategory == "All" || ex.category.equals(selectedCategory, ignoreCase = true)
+        val matchesEquipment = selectedEquipment == "All" || ex.equipmentRequired.contains(selectedEquipment, ignoreCase = true)
         val matchesSearch = searchQuery.isBlank() ||
                 ex.name.contains(searchQuery, ignoreCase = true) ||
-                ex.muscleGroup.contains(searchQuery, ignoreCase = true)
-        matchesCategory && matchesSearch
+                ex.muscleGroup.contains(searchQuery, ignoreCase = true) ||
+                ex.equipmentRequired.contains(searchQuery, ignoreCase = true)
+        matchesCategory && matchesEquipment && matchesSearch
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -343,6 +347,32 @@ fun ExerciseLibraryView(
                 ) {
                     Text(
                         text = cat,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isSelected) Color.Black else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+            }
+        }
+
+        // Equipment Filter Chips
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            equipmentList.forEach { equip ->
+                val isSelected = selectedEquipment == equip
+                Surface(
+                    onClick = { selectedEquipment = equip },
+                    shape = RoundedCornerShape(16.dp),
+                    color = if (isSelected) AthleticLime else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    border = if (isSelected) null else androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                ) {
+                    Text(
+                        text = equip,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                         color = if (isSelected) Color.Black else MaterialTheme.colorScheme.onSurface,

@@ -83,6 +83,12 @@ import com.example.ui.theme.AthleticLime
 import com.example.ui.theme.AthleticOrange
 import com.example.ui.viewmodel.CoachViewModel
 
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.LinearProgressIndicator
+import com.example.ui.screens.OnboardingWizard
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -95,13 +101,38 @@ fun ProfileScreen(
     val studyReport by viewModel.studyMeReport.collectAsStateWithLifecycle()
     val streak by viewModel.workoutStreak.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val rankData by viewModel.rankProgression.collectAsStateWithLifecycle()
 
     var selectedSection by remember { mutableIntStateOf(0) }
     var showEditProfileDialog by remember { mutableStateOf(false) }
+    var showOnboardingWizard by remember { mutableStateOf(false) }
     var editingPR by remember { mutableStateOf<PersonalRecord?>(null) }
     var showResetDialog by remember { mutableStateOf(false) }
 
-    val sectionTitles = listOf("Profile & Memory", "Study Me", "Progression Insights", "PR Records")
+    val sectionTitles = listOf("Rank & Tier", "Identity & Gear", "PR Records", "Progression Insights", "Study Me")
+
+    if (showOnboardingWizard) {
+        OnboardingWizard(
+            initialLevel = userProfile?.fitnessLevel ?: "Intermediate",
+            initialGoal = userProfile?.primaryGoal ?: "Skill Mastery & Relative Strength",
+            initialEquipment = userProfile?.equipmentAvailable ?: "Pull-up Bar, Dip Station, Floor, Rings",
+            initialDays = userProfile?.trainingDaysPerWeek ?: 5,
+            initialWeight = userProfile?.weightKg ?: 74.5f,
+            initialHeight = userProfile?.heightCm ?: 178f,
+            onDismiss = { showOnboardingWizard = false },
+            onFinish = { level, goal, equip, days, weight, height ->
+                viewModel.completeOnboarding(
+                    fitnessLevel = level,
+                    primaryGoal = goal,
+                    equipment = equip,
+                    daysPerWeek = days,
+                    weightKg = weight,
+                    heightCm = height
+                )
+                showOnboardingWizard = false
+            }
+        )
+    }
 
     if (showEditProfileDialog && userProfile != null) {
         EditProfileDialog(
@@ -223,7 +254,219 @@ fun ProfileScreen(
 
         when (selectedSection) {
             0 -> {
-                // Section: Profile & Memory
+                // Section 0: Rank & Tier Gamification
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, AthleticCyan.copy(alpha = 0.4f))
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "CURRENT ATHLETE TIER",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = AthleticCyan,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 1.5.sp
+                                    )
+                                    Text(
+                                        text = "${rankData.currentTier.tierName.uppercase()} ${rankData.currentTier.division}",
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        text = rankData.nextTier?.let { "Target: ${it.tierName} ${it.division}" } ?: "Maximum Tier Achieved",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = AthleticLime.copy(alpha = 0.15f),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, AthleticLime.copy(alpha = 0.3f))
+                                ) {
+                                    Text(
+                                        text = "#${rankData.globalLeaderboardRank} GLOBAL",
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 12.sp,
+                                        color = AthleticLime,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            LinearProgressIndicator(
+                                progress = { rankData.progressRatio },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp)),
+                                color = AthleticCyan,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "${rankData.currentXp} XP Total",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AthleticCyan
+                                )
+                                Text(
+                                    text = rankData.nextTier?.let { "${it.minXp} XP Required" } ?: "Apex Master",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "XP Earned By Category",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Text("Workouts", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("+${rankData.workoutsXp} XP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = AthleticCyan)
+                            }
+                        }
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Text("Skills Mastered", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("+${rankData.skillsXp} XP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = AthleticLime)
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Text("PR Milestones", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("+${rankData.prsXp} XP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = AthleticOrange)
+                            }
+                        }
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Text("Kinetic Streak", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("+${rankData.streakXp} XP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color(0xFFFF3366))
+                            }
+                        }
+                    }
+                }
+            }
+            1 -> {
+                // Section 1: Profile & Identity
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, AthleticCyan.copy(alpha = 0.3f))
+                    ) {
+                        Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(46.dp)
+                                            .clip(CircleShape)
+                                            .background(AthleticCyan.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.Person, contentDescription = null, tint = AthleticCyan, modifier = Modifier.size(26.dp))
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text("Alex Vance", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                        Text("@alex_titan • crmyhsk@gmail.com", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = AthleticLime.copy(alpha = 0.15f)
+                                ) {
+                                    Text("GOOGLE SYNCED", fontSize = 9.sp, fontWeight = FontWeight.Black, color = AthleticLime, modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp))
+                                }
+                            }
+
+                            Button(
+                                onClick = { showOnboardingWizard = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = AthleticCyan, contentColor = Color.Black),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Speed, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Re-Run 5-Step Calibration Wizard", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+
                 item {
                     val profile = userProfile ?: UserProfileEntity()
                     TrainingMemoryCard(profile = profile, streak = streak)
@@ -239,20 +482,38 @@ fun ProfileScreen(
                     )
                 }
             }
-            1 -> {
-                // Section: Study Me Analysis
+            2 -> {
+                // Section 2: PR Records
                 item {
-                    StudyMeCard(
-                        report = studyReport,
-                        onConsultCoach = {
-                            viewModel.selectTab("coach")
-                            viewModel.sendCoachPrompt("Study my profile and PR performance to propose my next training cycle")
-                        }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Personal Records (${prs.size})",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            text = "Tap to edit • Bin to delete",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = AthleticCyan
+                        )
+                    }
+                }
+
+                items(prs) { pr ->
+                    PersonalRecordItem(
+                        record = pr,
+                        onClick = { editingPR = pr },
+                        onDelete = { viewModel.deletePR(pr.recordKey) }
                     )
                 }
             }
-            2 -> {
-                // Section: Progression Insights
+            3 -> {
+                // Section 3: Progression Insights
                 item {
                     Text(
                         text = "Rules-Based Performance Insights",
@@ -278,32 +539,15 @@ fun ProfileScreen(
                     )
                 }
             }
-            3 -> {
-                // Section: PR Records
+            4 -> {
+                // Section 4: Study Me Analysis
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Personal Records",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = "Tap any to update",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = AthleticCyan
-                        )
-                    }
-                }
-
-                items(prs) { pr ->
-                    PersonalRecordItem(
-                        record = pr,
-                        onClick = { editingPR = pr }
+                    StudyMeCard(
+                        report = studyReport,
+                        onConsultCoach = {
+                            viewModel.selectTab("coach")
+                            viewModel.sendCoachPrompt("Study my profile and PR performance to propose my next training cycle")
+                        }
                     )
                 }
             }
@@ -823,7 +1067,8 @@ fun ProgressionInsightCard(
 @Composable
 fun PersonalRecordItem(
     record: PersonalRecord,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDelete: () -> Unit = {}
 ) {
     Surface(
         onClick = onClick,
@@ -839,7 +1084,7 @@ fun PersonalRecordItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = record.exerciseName,
                     style = MaterialTheme.typography.titleSmall,
@@ -867,12 +1112,28 @@ fun PersonalRecordItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit PR",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier.size(16.dp)
-                )
+                IconButton(
+                    onClick = onClick,
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit PR",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete PR",
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.6f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }

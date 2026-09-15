@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Calisthenics Coach"
+rootProject.name = "KINETIX"
 
 include(":app")

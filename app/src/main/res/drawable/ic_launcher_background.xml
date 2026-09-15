@@ -9,19 +9,27 @@
         <aapt:attr name="android:fillColor">
             <gradient
                 android:angle="315"
-                android:endColor="#0F172A"
-                android:startColor="#1E293B"
+                android:endColor="#050811"
+                android:startColor="#0D1527"
                 android:type="linear" />
         </aapt:attr>
     </path>
-    <!-- Subtle energetic diagonal accent lines -->
+    <!-- Kinetic energy radial glow behind apex symbol -->
     <path
-        android:pathData="M0,36 L36,0 M0,72 L72,0 M0,108 L108,0 M36,108 L108,36 M72,108 L108,72"
-        android:strokeWidth="1.2"
-        android:strokeColor="#1538BDF8" />
-    <!-- Subtle glow ring -->
+        android:pathData="M54,18 A36,36 0 1,0 54,90 A36,36 0 1,0 54,18"
+        android:strokeWidth="1.5"
+        android:strokeColor="#2000E5FF" />
     <path
-        android:pathData="M54,20 A34,34 0 1,0 54,88 A34,34 0 1,0 54,20"
-        android:strokeWidth="2"
-        android:strokeColor="#2200E5FF" />
+        android:pathData="M54,28 A26,26 0 1,0 54,80 A26,26 0 1,0 54,28"
+        android:strokeWidth="1"
+        android:strokeColor="#1500FF88" />
+    <!-- Dynamic kinetic diagonal accents -->
+    <path
+        android:pathData="M14,94 L94,14"
+        android:strokeWidth="1"
+        android:strokeColor="#1800E5FF" />
+    <path
+        android:pathData="M24,100 L100,24"
+        android:strokeWidth="0.8"
+        android:strokeColor="#1000FF88" />
 </vector>

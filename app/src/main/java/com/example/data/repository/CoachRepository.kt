@@ -43,6 +43,7 @@ class CoachRepository(
     private val profileDao = database.userProfileDao()
     private val exerciseDao = database.exerciseDao()
     private val programDao = database.programDao()
+    private val communityDao = database.communityPostDao()
 
     val allWorkoutRecords: Flow<List<WorkoutRecord>> = workoutDao.getAllRecords()
     val allPRs: Flow<List<PersonalRecord>> = prDao.getAllPRs()
@@ -53,6 +54,7 @@ class CoachRepository(
     val allExercises: Flow<List<ExerciseEntity>> = exerciseDao.getAllExercises()
     val allPrograms: Flow<List<CustomProgramEntity>> = programDao.getAllPrograms()
     val activeProgram: Flow<CustomProgramEntity?> = programDao.getActiveProgram()
+    val allCommunityPosts: Flow<List<com.example.data.local.CommunityPostEntity>> = communityDao.getAllPosts()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -63,36 +65,40 @@ class CoachRepository(
     private suspend fun seedDefaultsIfNeeded() {
         // 1. Seed PRs
         val existingPRs = prDao.getAllPRs().first()
-        if (existingPRs.isEmpty()) {
-            val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-            val todayStr = dateFormat.format(Date())
-            val defaults = CalisthenicsData.DefaultPersonalRecords.map {
-                PersonalRecord(
-                    recordKey = it.key,
-                    exerciseName = it.name,
-                    recordValue = it.defaultValue,
-                    unit = it.unit,
-                    category = it.category,
-                    dateAchieved = todayStr
-                )
-            }
-            prDao.insertAll(defaults)
+        val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+        val todayStr = dateFormat.format(Date())
+        val missingPRs = CalisthenicsData.DefaultPersonalRecords.filter { def ->
+            existingPRs.none { it.recordKey == def.key }
+        }.map {
+            PersonalRecord(
+                recordKey = it.key,
+                exerciseName = it.name,
+                recordValue = it.defaultValue,
+                unit = it.unit,
+                category = it.category,
+                dateAchieved = todayStr
+            )
+        }
+        if (missingPRs.isNotEmpty()) {
+            prDao.insertAll(missingPRs)
         }
 
         // 2. Seed Skills
         val existingSkills = skillDao.getAllSkillProgress().first()
-        if (existingSkills.isEmpty()) {
-            val initialSkills = CalisthenicsData.SkillProgressions.map {
-                SkillProgress(
-                    skillId = it.id,
-                    skillName = it.name,
-                    currentLevel = 1,
-                    maxLevel = it.levels.size,
-                    notes = "Starting progression",
-                    bestHoldSeconds = 0
-                )
-            }
-            skillDao.insertAll(initialSkills)
+        val missingSkills = CalisthenicsData.SkillProgressions.filter { prog ->
+            existingSkills.none { it.skillId == prog.id }
+        }.map {
+            SkillProgress(
+                skillId = it.id,
+                skillName = it.name,
+                currentLevel = 1,
+                maxLevel = it.levels.size,
+                notes = "Starting progression",
+                bestHoldSeconds = 0
+            )
+        }
+        if (missingSkills.isNotEmpty()) {
+            skillDao.insertAll(missingSkills)
         }
 
         // 3. Seed User Profile
@@ -118,7 +124,7 @@ class CoachRepository(
 
         // 4. Seed Exercise Database
         val existingExercises = exerciseDao.getAllExercises().first()
-        if (existingExercises.isEmpty()) {
+        if (existingExercises.size < CalisthenicsLibrary.DefaultExercises.size) {
             exerciseDao.insertAll(CalisthenicsLibrary.DefaultExercises)
         }
 
@@ -161,6 +167,59 @@ class CoachRepository(
                 )
             }
             programDao.insertRoutineDays(routineDays)
+        }
+
+        // 6. Seed Initial Community Posts
+        val existingPosts = communityDao.getAllPosts().first()
+        if (existingPosts.isEmpty()) {
+            val seedPosts = listOf(
+                com.example.data.local.CommunityPostEntity(
+                    id = "post_1",
+                    authorName = "Leonidas Vance",
+                    authorHandle = "@vance_cali",
+                    authorRankTier = "Grandmaster",
+                    avatarId = "falcon",
+                    timeAgo = "2h ago",
+                    content = "After 6 months of protraction drills, planche leans, and high-frequency parallette volume, finally locked 10 strict seconds with locked elbows. Trust the kinetic progression!",
+                    workoutTag = "PARALLETTES STATICS",
+                    prTag = "Full Planche 10s",
+                    likesCount = 84,
+                    isLiked = false,
+                    isBookmarked = false,
+                    commentsCount = 19
+                ),
+                com.example.data.local.CommunityPostEntity(
+                    id = "post_2",
+                    authorName = "Aria Sterling",
+                    authorHandle = "@aria_titan",
+                    authorRankTier = "Titan Conqueror",
+                    avatarId = "iron",
+                    timeAgo = "4h ago",
+                    content = "Combining gymnastics ring false-grip volume with heavy barbell posterior chain work is the ultimate formula for tendon resilience and dense hypertrophy.",
+                    workoutTag = "HYBRID IRON & RINGS",
+                    prTag = "180kg Deadlift + Muscle-up",
+                    likesCount = 142,
+                    isLiked = true,
+                    isBookmarked = true,
+                    commentsCount = 37
+                ),
+                com.example.data.local.CommunityPostEntity(
+                    id = "post_3",
+                    authorName = "Marcus Thorne",
+                    authorHandle = "@thorne_apex",
+                    authorRankTier = "Master Tier",
+                    avatarId = "kinetic",
+                    timeAgo = "Yesterday",
+                    content = "Banded counterweight drops to 5kg this morning! Forearm flexors and lat engagement feeling like solid steel. Keep climbing the Kinetix tiers.",
+                    workoutTag = "RELATIVE STRENGTH",
+                    prTag = "OAC Negatives (5s)",
+                    likesCount = 67,
+                    isLiked = false,
+                    isBookmarked = false,
+                    commentsCount = 12
+                )
+            )
+            communityDao.insertAll(seedPosts)
         }
     }
 
@@ -290,6 +349,31 @@ class CoachRepository(
                 dateAchieved = dateFormat.format(Date())
             )
         )
+    }
+
+    suspend fun deletePR(recordKey: String) {
+        prDao.deletePR(recordKey)
+    }
+
+    suspend fun deleteWorkoutRecord(recordId: Long) {
+        workoutDao.deleteRecordById(recordId)
+    }
+
+    suspend fun insertCommunityPost(post: com.example.data.local.CommunityPostEntity) {
+        communityDao.insertPost(post)
+    }
+
+    suspend fun toggleLikePost(postId: String, currentLikes: Int, isLiked: Boolean) {
+        val newLikes = if (isLiked) (currentLikes - 1).coerceAtLeast(0) else currentLikes + 1
+        communityDao.updateLike(postId, !isLiked, if (isLiked) -1 else 1)
+    }
+
+    suspend fun toggleBookmarkPost(postId: String, isBookmarked: Boolean) {
+        communityDao.updateBookmark(postId, !isBookmarked)
+    }
+
+    suspend fun deleteCommunityPost(postId: String) {
+        communityDao.deletePostById(postId)
     }
 
     fun setRestTime(seconds: Int) = preferences.setRestTime(seconds)

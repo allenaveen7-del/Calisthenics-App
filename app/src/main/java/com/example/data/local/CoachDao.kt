@@ -17,6 +17,9 @@ interface WorkoutRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecord(record: WorkoutRecord): Long
 
+    @Query("DELETE FROM workout_records WHERE id = :id")
+    suspend fun deleteRecordById(id: Long)
+
     @Query("DELETE FROM workout_records")
     suspend fun clearAll()
 }
@@ -31,6 +34,9 @@ interface PersonalRecordDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(prs: List<PersonalRecord>)
+
+    @Query("DELETE FROM personal_records WHERE recordKey = :key")
+    suspend fun deletePR(key: String)
 
     @Query("DELETE FROM personal_records")
     suspend fun clearAll()
@@ -154,4 +160,28 @@ interface ProgramDao {
 
     @Query("DELETE FROM routine_days")
     suspend fun clearAllDays()
+}
+
+@Dao
+interface CommunityPostDao {
+    @Query("SELECT * FROM community_posts ORDER BY timestamp DESC")
+    fun getAllPosts(): Flow<List<CommunityPostEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPost(post: CommunityPostEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(posts: List<CommunityPostEntity>)
+
+    @Query("UPDATE community_posts SET isLiked = :isLiked, likesCount = likesCount + :delta WHERE id = :id")
+    suspend fun updateLike(id: String, isLiked: Boolean, delta: Int)
+
+    @Query("UPDATE community_posts SET isBookmarked = :isBookmarked WHERE id = :id")
+    suspend fun updateBookmark(id: String, isBookmarked: Boolean)
+
+    @Query("DELETE FROM community_posts WHERE id = :id")
+    suspend fun deletePostById(id: String)
+
+    @Query("DELETE FROM community_posts")
+    suspend fun clearAll()
 }

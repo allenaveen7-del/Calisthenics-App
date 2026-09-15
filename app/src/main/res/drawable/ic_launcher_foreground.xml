@@ -5,58 +5,42 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Centered in 66dp zone (x: 21-87, y: 21-87) -->
     <group>
-        <!-- Parallel bars platform in 66dp zone -->
-        <!-- Left Bar and Right Bar -->
+        <!-- Outer Kinetic Wings: Left & Right Angled Chevron Blades -->
         <path
-            android:pathData="M27,72 L81,72"
-            android:strokeWidth="4"
-            android:strokeColor="#64748B"
-            android:strokeLineCap="round" />
+            android:pathData="M30,34 L42,34 L54,58 L46,62 Z"
+            android:fillColor="#00E5FF" />
         <path
-            android:pathData="M33,72 L33,83 M75,72 L75,83"
-            android:strokeWidth="3.5"
-            android:strokeColor="#475569"
-            android:strokeLineCap="round" />
-
-        <!-- Calisthenics Athlete in L-Sit Hold -->
-        <!-- Head -->
-        <path
-            android:pathData="M54,28 A5,5 0 1,0 54,38 A5,5 0 1,0 54,28 Z"
+            android:pathData="M78,34 L66,34 L54,58 L62,62 Z"
             android:fillColor="#00E5FF" />
 
-        <!-- Torso, Arms and L-sit legs -->
-        <!-- Arms pressing down to bars -->
+        <!-- High-Velocity Inner Wings (Electric Lime / Neon Green) -->
         <path
-            android:pathData="M46,43 L38,70"
-            android:strokeWidth="4"
-            android:strokeColor="#FFFFFF"
-            android:strokeLineCap="round" />
+            android:pathData="M36,44 L46,44 L54,60 L48,64 Z"
+            android:fillColor="#00FF88" />
         <path
-            android:pathData="M62,43 L70,70"
-            android:strokeWidth="4"
-            android:strokeColor="#FFFFFF"
-            android:strokeLineCap="round" />
+            android:pathData="M72,44 L62,44 L54,60 L60,64 Z"
+            android:fillColor="#00FF88" />
 
-        <!-- Torso -->
+        <!-- Apex Falcon Head / Kinetic Arrow Spearhead -->
         <path
-            android:pathData="M54,39 L54,61"
-            android:strokeWidth="6"
-            android:strokeColor="#00E5FF"
-            android:strokeLineCap="round" />
+            android:pathData="M54,26 L60,38 L54,35 L48,38 Z"
+            android:fillColor="#FFFFFF" />
 
-        <!-- L-sit Extended Legs (horizontal forward hold) -->
+        <!-- Central Iron Strength Core Pillar (Converging Kinetic Spine) -->
         <path
-            android:pathData="M54,61 L82,61"
-            android:strokeWidth="5"
-            android:strokeColor="#FFFFFF"
-            android:strokeLineCap="round" />
+            android:pathData="M52,38 L56,38 L56,76 L52,76 Z"
+            android:fillColor="#FFFFFF" />
 
-        <!-- Accent lightning energy dot -->
+        <!-- Bottom Aerodynamic Kinetic Tail Feathers -->
         <path
-            android:pathData="M54,23 L56,26 L53,27 L55,30"
-            android:strokeWidth="1.2"
-            android:strokeColor="#00E5FF"
-            android:strokeLineCap="round" />
+            android:pathData="M54,66 L42,80 L46,81 L54,72 L62,81 L66,80 Z"
+            android:fillColor="#00E5FF" />
+
+        <!-- Cyber accent glow dots -->
+        <path
+            android:pathData="M54,22 A2,2 0 1,0 54,26 A2,2 0 1,0 54,22 Z"
+            android:fillColor="#00FF88" />
     </group>
 </vector>

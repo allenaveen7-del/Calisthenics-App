@@ -53,6 +53,12 @@ import com.example.ui.theme.AthleticLime
 import com.example.ui.theme.AthleticOrange
 import com.example.ui.viewmodel.CoachViewModel
 
+import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.WorkspacePremium
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.TextButton
+
 @Composable
 fun HomeScreen(
     viewModel: CoachViewModel,
@@ -65,6 +71,7 @@ fun HomeScreen(
     val insights by viewModel.progressionInsights.collectAsStateWithLifecycle()
     val streak by viewModel.workoutStreak.collectAsStateWithLifecycle()
     val workoutRecords by viewModel.workoutRecords.collectAsStateWithLifecycle()
+    val rankData by viewModel.rankProgression.collectAsStateWithLifecycle()
     val todayProgram = viewModel.getTodayProgram()
     val todayDay = viewModel.getTodayDayName()
     val nextRestDay = viewModel.getNextRestDay()
@@ -86,9 +93,9 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "CALISTHENICS COACH",
+                    text = "KINETIX // ATHLETIC ENGINE",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = AthleticCyan,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp
                 )
@@ -117,7 +124,7 @@ fun HomeScreen(
                     Icon(
                         imageVector = Icons.Default.CalendarMonth,
                         contentDescription = "Calendar",
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = AthleticCyan,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -126,6 +133,105 @@ fun HomeScreen(
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+
+        // KINETIX Gamification Rank & Tier Card
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = androidx.compose.foundation.BorderStroke(1.dp, AthleticCyan.copy(alpha = 0.4f)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("kinetix_rank_card")
+        ) {
+            Column(modifier = Modifier.padding(18.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.linearGradient(listOf(AthleticCyan.copy(alpha = 0.25f), AthleticLime.copy(alpha = 0.25f)))
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MilitaryTech,
+                                contentDescription = null,
+                                tint = AthleticCyan,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "${rankData.currentTier.tierName.uppercase()} ${rankData.currentTier.division}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Black,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            Text(
+                                text = rankData.nextTier?.let { "Next: ${it.tierName} ${it.division}" } ?: "Maximum Tier Achieved",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = AthleticLime.copy(alpha = 0.15f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, AthleticLime.copy(alpha = 0.3f))
+                    ) {
+                        Text(
+                            text = "#${rankData.globalLeaderboardRank} GLOBAL",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = AthleticLime,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // XP Progress Bar
+                LinearProgressIndicator(
+                    progress = { rankData.progressRatio },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = AthleticCyan,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${rankData.currentXp} XP",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = AthleticCyan
+                    )
+                    Text(
+                        text = rankData.nextTier?.let { "${it.minXp} XP (${(rankData.progressRatio * 100).toInt()}%)" } ?: "Apex Rank",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

@@ -644,6 +644,241 @@ object CalisthenicsData {
                     commonMistakes = "Using knee drive; uneven elbow turnover."
                 )
             )
+        ),
+        SkillProgression(
+            id = "back_lever",
+            name = "Back Lever",
+            shortDescription = "Condition distal bicep tendons, posterior chain, and straight-arm shoulder extension.",
+            levels = listOf(
+                SkillLevel(
+                    level = 1,
+                    title = "German Hang Hold",
+                    targetStandard = "30s Calm Hold",
+                    description = "Hang with arms behind body in full shoulder extension.",
+                    techniqueCues = listOf("Breathe deeply into chest", "Condition bicep tendons", "Gentle passive hang"),
+                    commonMistakes = "Panicking or tensing neck; releasing grip abruptly."
+                ),
+                SkillLevel(
+                    level = 2,
+                    title = "Skin the Cat Reps",
+                    targetStandard = "5 Smooth Reps",
+                    description = "Rotate body between dead hang and German hang with full control.",
+                    techniqueCues = listOf("Keep arms straight", "Tuck knees tightly", "Control transition speed"),
+                    commonMistakes = "Dropping rapidly through bottom; bending elbows."
+                ),
+                SkillLevel(
+                    level = 3,
+                    title = "Tuck Back Lever",
+                    targetStandard = "20s Solid Hold",
+                    description = "Horizontal body suspended facing ground with knees tucked to chest.",
+                    techniqueCues = listOf("Lock elbows", "Depress shoulder blades", "Body strictly parallel to floor"),
+                    commonMistakes = "Hips sagging below shoulders; loose arms."
+                ),
+                SkillLevel(
+                    level = 4,
+                    title = "Adv Tuck / Straddle Back Lever",
+                    targetStandard = "15s Clean Hold",
+                    description = "Extend legs in straddle or open 90° tuck.",
+                    techniqueCues = listOf("Straight spine", "Squeeze glutes", "Supinated or neutral rings"),
+                    commonMistakes = "Arching lumbar spine; uneven hip alignment."
+                ),
+                SkillLevel(
+                    level = 5,
+                    title = "Full Back Lever",
+                    targetStandard = "10s Flawless Hold",
+                    description = "Dead straight horizontal body suspended facing the floor.",
+                    techniqueCues = listOf("Ankles, hips, and shoulders in one line", "Point toes", "Maximum straight arm lock"),
+                    commonMistakes = "Looking up too high; soft knees."
+                )
+            )
+        ),
+        SkillProgression(
+            id = "hspu",
+            name = "Handstand Push-up",
+            shortDescription = "Supreme vertical pressing power elevating your bodyweight overhead.",
+            levels = listOf(
+                SkillLevel(
+                    level = 1,
+                    title = "Pike Push-ups",
+                    targetStandard = "3 Sets of 12 Reps",
+                    description = "Inverted V-shape push-ups conditioning anterior deltoids.",
+                    techniqueCues = listOf("Head moves forward in tripod arc", "Hips stacked over hands", "Full lockout"),
+                    commonMistakes = "Flaring elbows out; dropping head straight down instead of forward."
+                ),
+                SkillLevel(
+                    level = 2,
+                    title = "Feet-Elevated Pike Push-ups",
+                    targetStandard = "3 Sets of 10 Reps",
+                    description = "Elevate feet on 24-inch box to load 70% bodyweight.",
+                    techniqueCues = listOf("Stack hips directly over wrists", "Deep range of motion", "Elbows tucked 45°"),
+                    commonMistakes = "Pushing backward instead of vertically upward."
+                ),
+                SkillLevel(
+                    level = 3,
+                    title = "Wall HSPU Eccentrics (Negatives)",
+                    targetStandard = "5 Reps (5s Descent)",
+                    description = "Control vertical descent from handstand to head gently touching floor.",
+                    techniqueCues = listOf("5-second slow tempo", "Land head like an egg on cushion", "Reset with kick-up"),
+                    commonMistakes = "Crashing head onto floor; losing hollow body."
+                ),
+                SkillLevel(
+                    level = 4,
+                    title = "Wall Handstand Push-up",
+                    targetStandard = "3 Sets of 6 - 8 Reps",
+                    description = "Full vertical push-up with heels resting lightly against wall.",
+                    techniqueCues = listOf("Tripod path touching head ahead of fingers", "Drive violently upward", "Lockout"),
+                    commonMistakes = "Kipping with legs; excessive lumbar hyperextension."
+                ),
+                SkillLevel(
+                    level = 5,
+                    title = "Freestanding Handstand Push-up",
+                    targetStandard = "3 - 5 Strict Clean Reps",
+                    description = "Zero wall support. Pure balance, overhead press, and spatial control.",
+                    techniqueCues = listOf("Claw fingers for micro-balance", "Slow controlled descent", "Press through midfoot line"),
+                    commonMistakes = "Bailing early; arching into scorpion."
+                )
+            )
+        ),
+        SkillProgression(
+            id = "human_flag",
+            name = "Human Flag",
+            shortDescription = "Defy gravity by extending your body horizontal like a flag off a vertical pole.",
+            levels = listOf(
+                SkillLevel(
+                    level = 1,
+                    title = "Vertical Pole Support & Chamber",
+                    targetStandard = "20s per Side",
+                    description = "Grip vertical pole, bottom arm pushing straight, top arm pulling.",
+                    techniqueCues = listOf("Bottom arm elbow dead straight", "Top arm pulls to ear", "Engage side body"),
+                    commonMistakes = "Bending bottom elbow; letting hips drop below hands."
+                ),
+                SkillLevel(
+                    level = 2,
+                    title = "Tuck Human Flag",
+                    targetStandard = "10 - 15s per Side",
+                    description = "Elevate torso horizontal with knees tucked into chest.",
+                    techniqueCues = listOf("Push bottom hand into pole hard", "Pull with top lat", "Hips horizontal"),
+                    commonMistakes = "Rotating chest toward pole; bottom arm collapse."
+                ),
+                SkillLevel(
+                    level = 3,
+                    title = "One-Leg Human Flag",
+                    targetStandard = "8 - 10s per Side",
+                    description = "One leg extended straight along horizontal axis, other knee tucked.",
+                    techniqueCues = listOf("Keep hips stacked vertically", "Point toe on extended leg", "Maximum push/pull force"),
+                    commonMistakes = "Sagging lower hip toward ground."
+                ),
+                SkillLevel(
+                    level = 4,
+                    title = "Straddle Human Flag",
+                    targetStandard = "6 - 10s per Side",
+                    description = "Both legs extended in wide straddle, body horizontal to ground.",
+                    techniqueCues = listOf("Open legs wide to reduce lever", "Squeeze lateral obliques", "Straight line"),
+                    commonMistakes = "Looking down; flexing at hips."
+                ),
+                SkillLevel(
+                    level = 5,
+                    title = "Full Human Flag",
+                    targetStandard = "5 - 8s Flawless Hold",
+                    description = "Body suspended straight as a board perpendicular to vertical pole.",
+                    techniqueCues = listOf("Legs together, toes pointed", "Torso completely horizontal", "Iron side body tension"),
+                    commonMistakes = "Allowing bottom shoulder to cave; bent bottom elbow."
+                )
+            )
+        ),
+        SkillProgression(
+            id = "dragon_flag",
+            name = "Dragon Flag",
+            shortDescription = "Bruce Lee's legendary core test requiring an unbreakable straight-body lever.",
+            levels = listOf(
+                SkillLevel(
+                    level = 1,
+                    title = "Hollow Body Rockers & Hold",
+                    targetStandard = "45s Rock Solid Hold",
+                    description = "Press lumbar flat into floor, rock gently maintaining rigid shape.",
+                    techniqueCues = listOf("Lower back glued down", "Arms overhead", "Point toes"),
+                    commonMistakes = "Arching lower back; resting shoulders on floor."
+                ),
+                SkillLevel(
+                    level = 2,
+                    title = "Tuck Dragon Flag",
+                    targetStandard = "3 Sets of 8 Reps",
+                    description = "Pivot body off shoulders with knees tucked into chest.",
+                    techniqueCues = listOf("Grip bench firmly behind head", "Pivot on upper shoulder blades", "No hip bending"),
+                    commonMistakes = "Rolling onto neck; using momentum."
+                ),
+                SkillLevel(
+                    level = 3,
+                    title = "One-Leg Dragon Flag",
+                    targetStandard = "3 Sets of 6 Reps/Side",
+                    description = "One leg extended straight, opposite knee tucked.",
+                    techniqueCues = listOf("Control 3-second lowering phase", "Keep torso in line with straight leg", "Glutes tight"),
+                    commonMistakes = "Dropping hips faster than legs."
+                ),
+                SkillLevel(
+                    level = 4,
+                    title = "Dragon Flag Negatives (Full)",
+                    targetStandard = "5 Reps with 5s Descent",
+                    description = "Lift to vertical, lower straight body over 5 seconds to hover above bench.",
+                    techniqueCues = listOf("Fight gravity every single inch", "Body straight as an arrow", "Hover 1 inch above bench"),
+                    commonMistakes = "Bending at waist on way down."
+                ),
+                SkillLevel(
+                    level = 5,
+                    title = "Strict Dragon Flag Reps & Hold",
+                    targetStandard = "5 Reps + 5s Bottom Hover",
+                    description = "Raise and lower straight body continuously with zero hip flexion.",
+                    techniqueCues = listOf("Only upper back touches bench", "Body stays in perfect straight plank", "Total core dominance"),
+                    commonMistakes = "Bending knees; resting on bench between reps."
+                )
+            )
+        ),
+        SkillProgression(
+            id = "manna_vsit",
+            name = "V-Sit & Manna",
+            shortDescription = "Pinnacle gymnastics compression, active pike flexibility, and shoulder extension.",
+            levels = listOf(
+                SkillLevel(
+                    level = 1,
+                    title = "Solid L-Sit Hold",
+                    targetStandard = "30s Hold on Floor",
+                    description = "Straight arms, legs horizontal at 90 degrees.",
+                    techniqueCues = listOf("Depress shoulders", "Point toes", "Lock knees"),
+                    commonMistakes = "Hips behind hands; bent knees."
+                ),
+                SkillLevel(
+                    level = 2,
+                    title = "High L-Sit Hold",
+                    targetStandard = "15s Hold (Legs at 60°)",
+                    description = "Compress core and lift legs 10-15 degrees above horizontal.",
+                    techniqueCues = listOf("Drive hips forward past hands", "Pike compression", "Active quads"),
+                    commonMistakes = "Slumping chest; letting heels drop."
+                ),
+                SkillLevel(
+                    level = 3,
+                    title = "45° V-Sit Hold",
+                    targetStandard = "10 - 15s Clean Hold",
+                    description = "Legs lifted halfway between horizontal and vertical.",
+                    techniqueCues = listOf("Lean torso back slightly to balance", "Straight arms locked", "Toes toward ceiling"),
+                    commonMistakes = "Bent elbows; rounded lower spine collapse."
+                ),
+                SkillLevel(
+                    level = 4,
+                    title = "High V-Sit (70° - 80°)",
+                    targetStandard = "8 - 12s Hold",
+                    description = "Legs nearly vertical, toes pointing straight up above shoulders.",
+                    techniqueCues = listOf("Intense compression between quads and chest", "Shoulders pushing down", "Deep hip hinge"),
+                    commonMistakes = "Losing height; knees buckling."
+                ),
+                SkillLevel(
+                    level = 5,
+                    title = "Manna Hold",
+                    targetStandard = "5 - 8s Flawless Manna",
+                    description = "Legs parallel to ceiling above head, hips pressed forward through hands.",
+                    techniqueCues = listOf("Extreme shoulder extension behind torso", "Legs fully horizontal overhead", "Elite Olympic milestone"),
+                    commonMistakes = "Insufficient shoulder mobility; bent elbows."
+                )
+            )
         )
     )
 
@@ -658,7 +893,15 @@ object CalisthenicsData {
         PersonalRecordData("planche_lean", "Planche Lean Hold", 30, "s", "hold"),
         PersonalRecordData("tuck_planche", "Tuck Planche Hold", 8, "s", "hold"),
         PersonalRecordData("front_lever_hold", "Front Lever Hold", 5, "s", "hold"),
-        PersonalRecordData("muscle_ups", "Strict Muscle-ups", 1, "reps", "reps")
+        PersonalRecordData("muscle_ups", "Strict Muscle-ups", 1, "reps", "reps"),
+        PersonalRecordData("back_lever_hold", "Back Lever Hold", 10, "s", "hold"),
+        PersonalRecordData("dragon_flag_reps", "Dragon Flag", 6, "reps", "reps"),
+        PersonalRecordData("human_flag_hold", "Human Flag Hold", 5, "s", "hold"),
+        PersonalRecordData("barbell_bench_1rm", "Barbell Bench Press (1RM)", 85, "kg", "reps"),
+        PersonalRecordData("barbell_squat_1rm", "Barbell Back Squat (1RM)", 110, "kg", "reps"),
+        PersonalRecordData("barbell_deadlift_1rm", "Barbell Deadlift (1RM)", 140, "kg", "reps"),
+        PersonalRecordData("weighted_pullup", "Weighted Pull-up (+kg)", 20, "kg", "reps"),
+        PersonalRecordData("weighted_dip", "Weighted Dip (+kg)", 25, "kg", "reps")
     )
 }
 

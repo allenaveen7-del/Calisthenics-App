@@ -38,7 +38,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.outlined.Public
 import com.example.ui.screens.AiCoachScreen
+import com.example.ui.screens.CommunityScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.ProgramScreen
@@ -82,6 +85,13 @@ sealed class ScreenTab(
         unselectedIcon = Icons.Outlined.MilitaryTech
     )
 
+    object Community : ScreenTab(
+        id = "community",
+        title = "Arena",
+        selectedIcon = Icons.Default.Public,
+        unselectedIcon = Icons.Outlined.Public
+    )
+
     object Profile : ScreenTab(
         id = "profile",
         title = "Profile",
@@ -103,6 +113,7 @@ fun MainAppScreen(
         ScreenTab.Program,
         ScreenTab.Coach,
         ScreenTab.Skills,
+        ScreenTab.Community,
         ScreenTab.Profile
     )
 
@@ -176,6 +187,7 @@ fun MainAppScreen(
                         )
                         "coach" -> AiCoachScreen(viewModel = viewModel)
                         "skills" -> SkillsScreen(viewModel = viewModel)
+                        "community" -> CommunityScreen(viewModel = viewModel)
                         "profile" -> ProfileScreen(viewModel = viewModel)
                         else -> HomeScreen(
                             viewModel = viewModel,

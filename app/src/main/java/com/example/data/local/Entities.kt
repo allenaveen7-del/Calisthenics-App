@@ -13,7 +13,10 @@ data class WorkoutRecord(
     val durationSeconds: Int,
     val completedExercisesCount: Int,
     val totalExercisesCount: Int,
-    val dateFormatted: String
+    val dateFormatted: String,
+    val caloriesBurned: Int = 240,
+    val heartRateAvg: Int = 135,
+    val totalVolumeKg: Int = 0
 )
 
 @Entity(tableName = "personal_records")
@@ -42,6 +45,17 @@ data class SkillProgress(
 data class UserProfileEntity(
     @PrimaryKey
     val id: Int = 1,
+    val displayName: String = "Alex Vance",
+    val username: String = "alex_titan",
+    val avatarId: String = "avatar_falcon",
+    val age: Int = 24,
+    val gender: String = "Male",
+    val heightCm: Float = 178f,
+    val weightKg: Float = 74.5f,
+    val isMetric: Boolean = true,
+    val isOnboardingCompleted: Boolean = true,
+    val authProvider: String = "Google",
+    val userEmail: String = "crmyhsk@gmail.com",
     val fitnessLevel: String = "Intermediate", // Beginner, Intermediate, Advanced, Elite
     val experienceYears: String = "1-2 years",
     val primaryGoal: String = "Skill Mastery & Strength",
@@ -53,7 +67,28 @@ data class UserProfileEntity(
     val currentProgramPhase: String = "Phase 1: Athletic Foundation & Hypertrophy",
     val currentWeek: Int = 1,
     val totalWeeksInPhase: Int = 8,
-    val notes: String = ""
+    val notes: String = "",
+    val bodyMetricsJson: String = "[]",
+    val favoritedSkillIdsJson: String = "[\"planche\", \"handstand\"]"
+)
+
+@Entity(tableName = "community_posts")
+data class CommunityPostEntity(
+    @PrimaryKey
+    val id: String,
+    val authorName: String,
+    val authorHandle: String,
+    val authorRankTier: String,
+    val avatarId: String,
+    val timeAgo: String,
+    val content: String,
+    val workoutTag: String = "",
+    val prTag: String = "",
+    val likesCount: Int = 12,
+    val isLiked: Boolean = false,
+    val isBookmarked: Boolean = false,
+    val commentsCount: Int = 2,
+    val timestamp: Long = System.currentTimeMillis()
 )
 
 @Entity(tableName = "exercises")
